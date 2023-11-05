@@ -1,5 +1,6 @@
-package com.batch_sample.batchjava.customer;
+package com.batch_sample.batchjava.customer.entity;
 
+import com.batch_sample.batchjava.customer.enums.CustomerStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @ToString
-public class CustomerDao {
+public class CustomerEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,13 +29,13 @@ public class CustomerDao {
     private LocalDateTime loginAt;
     
     @Setter
-    private StatusEnum status;
+    private CustomerStatus status;
     
-    public CustomerDao(String name, String email) {
+    public CustomerEntity(String name, String email) {
         this.name = name;
         this.email = email;
         this.createAt = LocalDateTime.now();
         this.loginAt = LocalDateTime.now();
-        this.status = StatusEnum.NORMAL;
+        this.status = CustomerStatus.NORMAL;
     }
 }

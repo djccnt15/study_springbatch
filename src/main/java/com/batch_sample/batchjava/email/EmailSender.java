@@ -1,4 +1,4 @@
-package com.batch_sample.batchjava.customer;
+package com.batch_sample.batchjava.email;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,5 +1,8 @@
 package com.batch_sample.batchjava.customer;
 
+import com.batch_sample.batchjava.batch.DormantBatchJob;
+import com.batch_sample.batchjava.customer.enums.CustomerStatus;
+import com.batch_sample.batchjava.customer.entity.CustomerEntity;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +34,7 @@ class DormantBatchJobTest {
         
         final Long countDormant = customerRepository.findAll()
             .stream()
-            .filter(it -> it.getStatus() == StatusEnum.DORMANT)
+            .filter(it -> it.getStatus() == CustomerStatus.DORMANT)
             .count();
         
         Assertions.assertThat(countDormant).isEqualTo(3);
@@ -44,7 +47,7 @@ class DormantBatchJobTest {
         
         final Long countDormant = customerRepository.findAll()
             .stream()
-            .filter(it -> it.getStatus() == StatusEnum.DORMANT)
+            .filter(it -> it.getStatus() == CustomerStatus.DORMANT)
             .count();
         
         Assertions.assertThat(countDormant).isEqualTo(3);
@@ -52,8 +55,8 @@ class DormantBatchJobTest {
     
     private void saveCustomer(Integer loginMinusDays) {
         final String uuid = UUID.randomUUID().toString();
-        final CustomerDao customer = new CustomerDao(uuid, uuid + "1@test.com");
-        customer.setLoginAt(LocalDateTime.now().minusDays(loginMinusDays));
-        customerRepository.save(customer);
+        final CustomerEntity customerEntity = new CustomerEntity(uuid, uuid + "1@test.com");
+        customerEntity.setLoginAt(LocalDateTime.now().minusDays(loginMinusDays));
+        customerRepository.save(customerEntity);
     }
 }

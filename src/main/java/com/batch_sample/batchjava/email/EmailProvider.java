@@ -1,4 +1,4 @@
-package com.batch_sample.batchjava.customer;
+package com.batch_sample.batchjava.email;
 
 public interface EmailProvider {
 
