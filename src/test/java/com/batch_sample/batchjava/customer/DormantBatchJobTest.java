@@ -1,6 +1,8 @@
 package com.batch_sample.batchjava.customer;
 
 import com.batch_sample.batchjava.batch.DormantBatchJob;
+import com.batch_sample.batchjava.batch.enums.BatchStatus;
+import com.batch_sample.batchjava.batch.model.JobExecution;
 import com.batch_sample.batchjava.customer.enums.CustomerStatus;
 import com.batch_sample.batchjava.customer.entity.CustomerEntity;
 import org.assertj.core.api.Assertions;
@@ -22,7 +24,7 @@ class DormantBatchJobTest {
     private DormantBatchJob dormantBatchJob;
     
     @Test
-    @DisplayName("1년 이상 로그인 하지 않은 고객이 3명 있을 때, 해당하는 3명의 고객을 휴면으로 전환한다")
+    @DisplayName("1년 이상 로그인 하지 않은 고객이 3명 있을 때, 해당하는 3명의 고객을 휴면으로 전환")
     void test1() {
         saveCustomer(366);
         saveCustomer(366);
@@ -30,7 +32,7 @@ class DormantBatchJobTest {
         saveCustomer(364);
         saveCustomer(364);
         
-        dormantBatchJob.execute();
+        final JobExecution result = dormantBatchJob.execute();
         
         final Long countDormant = customerRepository.findAll()
             .stream()
@@ -38,12 +40,13 @@ class DormantBatchJobTest {
             .count();
         
         Assertions.assertThat(countDormant).isEqualTo(3);
+        Assertions.assertThat(result.getStatus()).isEqualTo(BatchStatus.COMPLETED);
     }
     
     @Test
-    @DisplayName("고객이 없는 경우에도 배치는 정상 동작해야 한다")
+    @DisplayName("고객이 없는 경우에도 배치는 정상 동작")
     void test2() {
-        dormantBatchJob.execute();
+        final JobExecution result = dormantBatchJob.execute();
         
         final Long countDormant = customerRepository.findAll()
             .stream()
@@ -51,6 +54,17 @@ class DormantBatchJobTest {
             .count();
         
         Assertions.assertThat(countDormant).isEqualTo(3);
+        Assertions.assertThat(result.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+    }
+    
+    @Test
+    @DisplayName("배치가 실패하면 Batch Status는 FAILED를 반환")
+    void test3() {
+        final DormantBatchJob dormantBatchJob = new DormantBatchJob(null);
+        
+        final JobExecution result = dormantBatchJob.execute();
+        
+        Assertions.assertThat(result.getStatus()).isEqualTo(BatchStatus.FAILED);
     }
     
     private void saveCustomer(Integer loginMinusDays) {
