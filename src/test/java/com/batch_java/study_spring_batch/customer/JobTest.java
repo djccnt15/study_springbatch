@@ -1,7 +1,8 @@
 package com.batch_java.study_spring_batch.customer;
 
 import com.batch_java.study_spring_batch.application.business.DormantBatchJobExecutionListener;
-import com.batch_java.study_spring_batch.batch.Job;
+import com.batch_java.study_spring_batch.batch.business.Job;
+import com.batch_java.study_spring_batch.batch.business.TaskletJob;
 import com.batch_java.study_spring_batch.batch.enums.BatchStatus;
 import com.batch_java.study_spring_batch.batch.model.JobExecution;
 import com.batch_java.study_spring_batch.customer.entity.CustomerEntity;
@@ -82,7 +83,7 @@ class JobTest {
     @Test
     @DisplayName("배치가 실패하면 Batch Status는 FAILED를 반환")
     void test4() {
-        final Job job = new Job(null, new DormantBatchJobExecutionListener(new EmailSender()));
+        final Job job = new TaskletJob(null, new DormantBatchJobExecutionListener(new EmailSender()));
         
         final JobExecution result = job.execute();
         

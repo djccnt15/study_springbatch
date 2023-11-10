@@ -4,7 +4,8 @@ import com.batch_java.study_spring_batch.application.business.DormantBatchItemPr
 import com.batch_java.study_spring_batch.application.business.DormantBatchItemReader;
 import com.batch_java.study_spring_batch.application.business.DormantBatchItemWriter;
 import com.batch_java.study_spring_batch.application.business.DormantBatchJobExecutionListener;
-import com.batch_java.study_spring_batch.batch.Job;
+import com.batch_java.study_spring_batch.batch.business.Job;
+import com.batch_java.study_spring_batch.batch.business.TaskletJob;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,7 +19,7 @@ public class DormantBatchConfiguration {
         DormantBatchItemWriter itemWriter,
         DormantBatchJobExecutionListener listener
     ) {
-        return Job.builder()
+        return TaskletJob.builder()
             .itemReader(itemReader)
             .itemProcessor(itemProcessor)
             .itemWriter(itemWriter)
