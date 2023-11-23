@@ -1,0 +1,20 @@
+[
+  {
+    "name": "a",
+    "age": 10,
+    "region": "KR",
+    "phoneNumber": "010-1111-1111"
+  },
+  {
+    "name": "b",
+    "age": 20,
+    "region": "KR",
+    "phoneNumber": "010-2222-2222"
+  },
+  {
+    "name": "c",
+    "age": 30,
+    "region": "KR",
+    "phoneNumber": "010-3333-3333"
+  }
+]
