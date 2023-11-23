@@ -22,7 +22,7 @@ public class JobScopeBatchConfiguration {
         JobRepository jobRepository,
         Step step
     ) {
-        return new JobBuilder("Job-tolerant-rollback", jobRepository)
+        return new JobBuilder("Job-Scope", jobRepository)
             .start(step)
             .build();
     }

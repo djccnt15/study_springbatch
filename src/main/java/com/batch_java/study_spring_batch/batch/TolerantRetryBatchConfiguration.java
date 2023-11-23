@@ -20,7 +20,7 @@ public class TolerantRetryBatchConfiguration {
         JobRepository jobRepository,
         Step step
     ) {
-        return new JobBuilder("Job-tolerant-rollback", jobRepository)
+        return new JobBuilder("Job-tolerant-retry", jobRepository)
             .start(step)
             .build();
     }

@@ -1,5 +1,6 @@
 package com.batch_java.study_spring_batch.batch;
 
+import com.batch_java.study_spring_batch.common.Batch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -21,7 +22,7 @@ public class StepFlowBatchConfiguration {
         Step step3,
         Step step4
     ) {
-        return new JobBuilder("flowJob", jobRepository)
+        return new JobBuilder("Flow-Job", jobRepository)
             .start(step1)
             .on("*").to(step2)
             .from(step1)
