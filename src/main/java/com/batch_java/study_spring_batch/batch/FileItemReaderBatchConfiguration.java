@@ -20,8 +20,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
-@Batch
-public class ItemReaderBatchConfiguration {
+// @Batch
+public class FileItemReaderBatchConfiguration {
 
     @Bean
     public Job job(
