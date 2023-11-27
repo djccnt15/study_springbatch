@@ -7,11 +7,11 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
-@Table(name = "USER")
+@Table(name = "USER_NEW")
 @NoArgsConstructor
 @SuperBuilder
-public class User {
-
+public class UserNew {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
