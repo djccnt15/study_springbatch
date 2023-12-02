@@ -1,7 +1,9 @@
 package com.batch_java.study_spring_batch.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 @Getter
 public enum ServicePolicy {
     A(1L, "/url/services/a", 10),
@@ -35,10 +37,4 @@ public enum ServicePolicy {
     private final Long id;
     private final String url;
     private final Integer fee;
-    
-    ServicePolicy(Long id, String url, Integer fee) {
-        this.id = id;
-        this.url = url;
-        this.fee = fee;
-    }
 }

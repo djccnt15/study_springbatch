@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 @Slf4j
-@Batch
+// @Batch
 @RequiredArgsConstructor
 public class ApiOrderGeneratePartitionJobConfiguration {
 
