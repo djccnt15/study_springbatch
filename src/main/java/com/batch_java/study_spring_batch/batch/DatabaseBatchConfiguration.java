@@ -79,7 +79,7 @@ public class DatabaseBatchConfiguration {
         EntityManagerFactory entityManagerFactory
     ) {
         return new JpaCursorItemReaderBuilder<User>()
-            .name("JpaCursorItemReader")
+            .name("jpaCursorItemReader")
             .entityManagerFactory(entityManagerFactory)
             .queryString("SELECT u FROM User u ORDER BY u.id")
             .build();
