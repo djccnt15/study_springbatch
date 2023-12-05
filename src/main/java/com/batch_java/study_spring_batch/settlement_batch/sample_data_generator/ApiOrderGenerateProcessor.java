@@ -32,7 +32,7 @@ public class ApiOrderGenerateProcessor implements ItemProcessor<String, ApiOrder
         
         final Long randomCustomerId = customerIds.get(random.nextInt(customerIds.size()));
         final ServicePolicy randomServicePolicy = servicePolicies.get(random.nextInt(servicePolicies.size()));
-        final State state = random.nextInt(10) % 10 == 1 ? State.FAIL : State.SUCCESS;
+        final State randomState = random.nextInt(10) % 10 == 1 ? State.FAIL : State.SUCCESS;
         
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         final LocalDateTime requestedAt = LocalDateTime.of(LocalDate.parse(item, formatter), LocalTime.now());
@@ -41,7 +41,7 @@ public class ApiOrderGenerateProcessor implements ItemProcessor<String, ApiOrder
             .id(UUID.randomUUID().toString())
             .customerId(randomCustomerId)
             .url(randomServicePolicy.getUrl())
-            .state(state)
+            .state(randomState)
             .createdAt(LocalDateTime.now())
             .requestedAt(requestedAt)
             .build();
