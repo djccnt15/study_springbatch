@@ -1,7 +1,7 @@
 package com.batch_java.study_spring_batch.batch;
 
 import com.batch_java.study_spring_batch.common.Batch;
-import com.batch_java.study_spring_batch.model.User;
+import com.batch_java.study_spring_batch.model.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -38,32 +38,32 @@ public class FlatFileBatchConfiguration {
     public Step step(
         JobRepository jobRepository,
         PlatformTransactionManager transactionManager,
-        ItemReader<User> flatFileItemReader,
-        ItemWriter<User> formattedFlatFileItemWriter
+        ItemReader<UserEntity> flatFileItemReader,
+        ItemWriter<UserEntity> formattedFlatFileItemWriter
     ) {
         return new StepBuilder("step", jobRepository)
-            .<User, User>chunk(2, transactionManager)
+            .<UserEntity, UserEntity>chunk(2, transactionManager)
             .reader(flatFileItemReader)
             .writer(formattedFlatFileItemWriter)
             .build();
     }
     
     @Bean
-    public FlatFileItemReader<User> flatFileItemReader() {
-        return new FlatFileItemReaderBuilder<User>()
+    public FlatFileItemReader<UserEntity> flatFileItemReader() {
+        return new FlatFileItemReaderBuilder<UserEntity>()
             .name("flatFileItemReader")
             .resource(new ClassPathResource("users.txt"))
             .linesToSkip(1)
             .delimited().delimiter(",")
             .names("name", "age", "region", "phoneNumber")
-            .targetType(User.class)
+            .targetType(UserEntity.class)
             .strict(true)
             .build();
     }
     
     @Bean
-    public ItemWriter<User> flatFileItemWriter() {
-        return new FlatFileItemWriterBuilder<User>()
+    public ItemWriter<UserEntity> flatFileItemWriter() {
+        return new FlatFileItemWriterBuilder<UserEntity>()
             .name("flatFileItemWriter")
             .resource(new PathResource("src/main/resources/new_users.txt"))
             .delimited().delimiter(",")
@@ -75,8 +75,8 @@ public class FlatFileBatchConfiguration {
     }
     
     @Bean
-    public ItemWriter<User> formattedFlatFileItemWriter() {
-        return new FlatFileItemWriterBuilder<User>()
+    public ItemWriter<UserEntity> formattedFlatFileItemWriter() {
+        return new FlatFileItemWriterBuilder<UserEntity>()
             .name("flatFileItemWriter")
             .resource(new PathResource("src/main/resources/new_users.txt"))
             .formatted().format("name: %s, age: %s, region: %s, phoneNumber: %s")

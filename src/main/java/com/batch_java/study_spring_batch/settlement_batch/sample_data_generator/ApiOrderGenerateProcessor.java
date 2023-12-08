@@ -1,6 +1,6 @@
 package com.batch_java.study_spring_batch.settlement_batch.sample_data_generator;
 
-import com.batch_java.study_spring_batch.model.ApiOrder;
+import com.batch_java.study_spring_batch.model.ApiOrderEntity;
 import com.batch_java.study_spring_batch.domain.ServicePolicy;
 import com.batch_java.study_spring_batch.enums.State;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +19,14 @@ import java.util.stream.LongStream;
 
 @Slf4j
 @Component
-public class ApiOrderGenerateProcessor implements ItemProcessor<String, ApiOrder> {
+public class ApiOrderGenerateProcessor implements ItemProcessor<String, ApiOrderEntity> {
     
     private final List<Long> customerIds = LongStream.range(0, 20).boxed().toList();
     private final List<ServicePolicy> servicePolicies = Arrays.stream(ServicePolicy.values()).toList();
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
     
     @Override
-    public ApiOrder process(
+    public ApiOrderEntity process(
         String item
     ) throws Exception {
         
@@ -37,7 +37,7 @@ public class ApiOrderGenerateProcessor implements ItemProcessor<String, ApiOrder
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         final LocalDateTime requestedAt = LocalDateTime.of(LocalDate.parse(item, formatter), LocalTime.now());
         
-        return ApiOrder.builder()
+        return ApiOrderEntity.builder()
             .id(UUID.randomUUID().toString())
             .customerId(randomCustomerId)
             .url(randomServicePolicy.getUrl())

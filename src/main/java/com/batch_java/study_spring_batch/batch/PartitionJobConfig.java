@@ -1,7 +1,7 @@
 package com.batch_java.study_spring_batch.batch;
 
 import com.batch_java.study_spring_batch.common.Batch;
-import com.batch_java.study_spring_batch.model.User;
+import com.batch_java.study_spring_batch.model.UserEntity;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -65,11 +65,11 @@ public class PartitionJobConfig {
     @Bean
     public Step step(
         JobRepository jobRepository,
-        JpaPagingItemReader<User> jpaPagingItemReader,
+        JpaPagingItemReader<UserEntity> jpaPagingItemReader,
         PlatformTransactionManager platformTransactionManager
     ) {
         return new StepBuilder("step", jobRepository)
-            .<User, User>chunk(4, platformTransactionManager)
+            .<UserEntity, UserEntity>chunk(4, platformTransactionManager)
             .reader(jpaPagingItemReader)
             .writer(result -> log.info(result.toString()))
             .build();
@@ -77,7 +77,7 @@ public class PartitionJobConfig {
     
     @Bean
     @StepScope
-    public JpaPagingItemReader<User> itemReader(
+    public JpaPagingItemReader<UserEntity> itemReader(
         @Value("#{stepExecutionContext[minValue]}") Long minValue,
         @Value("#{stepExecutionContext[maxValue]}") Long maxValue,
         EntityManagerFactory entityManagerFactory
@@ -88,7 +88,7 @@ public class PartitionJobConfig {
         params.put("minValue", minValue);
         params.put("maxValue", maxValue);
         
-        return new JpaPagingItemReaderBuilder<User>()
+        return new JpaPagingItemReaderBuilder<UserEntity>()
             .name("itemReader")
             .entityManagerFactory(entityManagerFactory)
             .pageSize(5)

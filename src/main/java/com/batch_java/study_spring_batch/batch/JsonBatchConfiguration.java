@@ -1,7 +1,7 @@
 package com.batch_java.study_spring_batch.batch;
 
 import com.batch_java.study_spring_batch.common.Batch;
-import com.batch_java.study_spring_batch.model.User;
+import com.batch_java.study_spring_batch.model.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -41,28 +41,28 @@ public class JsonBatchConfiguration {
     public Step step(
         JobRepository jobRepository,
         PlatformTransactionManager transactionManager,
-        ItemReader<User> jsonItemReader,
-        ItemWriter<User> jsonFileItemWriter
+        ItemReader<UserEntity> jsonItemReader,
+        ItemWriter<UserEntity> jsonFileItemWriter
     ) {
         return new StepBuilder("step", jobRepository)
-            .<User, User>chunk(2, transactionManager)
+            .<UserEntity, UserEntity>chunk(2, transactionManager)
             .reader(jsonItemReader)
             .writer(jsonFileItemWriter)
             .build();
     }
     
     @Bean
-    public JsonItemReader<User> jsonItemReader() {
-        return new JsonItemReaderBuilder<User>()
+    public JsonItemReader<UserEntity> jsonItemReader() {
+        return new JsonItemReaderBuilder<UserEntity>()
             .name("jsonItemReader")
             .resource(new ClassPathResource("users.json"))
-            .jsonObjectReader(new JacksonJsonObjectReader<>(User.class))
+            .jsonObjectReader(new JacksonJsonObjectReader<>(UserEntity.class))
             .build();
     }
     
     @Bean
-    public JsonFileItemWriter<User> jsonFileItemWriter() {
-        return new JsonFileItemWriterBuilder<User>()
+    public JsonFileItemWriter<UserEntity> jsonFileItemWriter() {
+        return new JsonFileItemWriterBuilder<UserEntity>()
             .name("jsonFileItemWriter")
             .resource(new PathResource("src/main/resources/new_user.json"))
             .jsonObjectMarshaller(new JacksonJsonObjectMarshaller<>())

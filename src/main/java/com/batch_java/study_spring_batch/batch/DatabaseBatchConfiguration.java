@@ -2,8 +2,8 @@ package com.batch_java.study_spring_batch.batch;
 
 import com.batch_java.study_spring_batch.common.Batch;
 import com.batch_java.study_spring_batch.converter.UserConverter;
-import com.batch_java.study_spring_batch.model.UserNew;
-import com.batch_java.study_spring_batch.model.User;
+import com.batch_java.study_spring_batch.model.UserNewEntity;
+import com.batch_java.study_spring_batch.model.UserEntity;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -44,12 +44,12 @@ public class DatabaseBatchConfiguration {
     public Step step(
         JobRepository jobRepository,
         PlatformTransactionManager transactionManager,
-        ItemReader<User> jpaCursorItemReader,
-        ItemProcessor<User, UserNew> itemProcessor,
-        ItemWriter<UserNew> jdbcItemWriter
+        ItemReader<UserEntity> jpaCursorItemReader,
+        ItemProcessor<UserEntity, UserNewEntity> itemProcessor,
+        ItemWriter<UserNewEntity> jdbcItemWriter
     ) {
         return new StepBuilder("step", jobRepository)
-            .<User, UserNew>chunk(2, transactionManager)
+            .<UserEntity, UserNewEntity>chunk(2, transactionManager)
             .reader(jpaCursorItemReader)
             .processor(itemProcessor)
             // .writer(System.out::println)
@@ -63,10 +63,10 @@ public class DatabaseBatchConfiguration {
     }
     
     @Bean
-    public ItemReader<User> jpaPagingItemReader(
+    public ItemReader<UserEntity> jpaPagingItemReader(
         EntityManagerFactory entityManagerFactory
     ) {
-        return new JpaPagingItemReaderBuilder<User>()
+        return new JpaPagingItemReaderBuilder<UserEntity>()
             .name("jpaPagingItemReader")
             .entityManagerFactory(entityManagerFactory)
             .queryString("SELECT u FROM User u ORDER BY u.id")  // 실제 테이블 명 x, JPA 클래스 이름 사용
@@ -75,10 +75,10 @@ public class DatabaseBatchConfiguration {
     }
 
     @Bean
-    public ItemReader<User> jpaCursorItemReader(
+    public ItemReader<UserEntity> jpaCursorItemReader(
         EntityManagerFactory entityManagerFactory
     ) {
-        return new JpaCursorItemReaderBuilder<User>()
+        return new JpaCursorItemReaderBuilder<UserEntity>()
             .name("jpaCursorItemReader")
             .entityManagerFactory(entityManagerFactory)
             .queryString("SELECT u FROM User u ORDER BY u.id")
@@ -86,19 +86,19 @@ public class DatabaseBatchConfiguration {
     }
 
     @Bean
-    public ItemWriter<UserNew> jpaItemWriter(
+    public ItemWriter<UserNewEntity> jpaItemWriter(
         EntityManagerFactory entityManagerFactory
     ) {
-        return new JpaItemWriterBuilder<UserNew>()
+        return new JpaItemWriterBuilder<UserNewEntity>()
             .entityManagerFactory(entityManagerFactory)
             .build();
     }
     
     @Bean
-    public ItemWriter<UserNew> jdbcItemWriter(
+    public ItemWriter<UserNewEntity> jdbcItemWriter(
         DataSource dataSource
     ) {
-        return new JdbcBatchItemWriterBuilder<UserNew>()
+        return new JdbcBatchItemWriterBuilder<UserNewEntity>()
             .dataSource(dataSource)
             .sql("""
                 INSERT INTO USER_NEW
@@ -109,7 +109,7 @@ public class DatabaseBatchConfiguration {
     }
     
     @Bean
-    public ItemProcessor<User, UserNew> itemProcessor() {
+    public ItemProcessor<UserEntity, UserNewEntity> itemProcessor() {
         return user -> {
             user.setAge(user.getAge() * 2);
             return new UserConverter().toNewUser(user);

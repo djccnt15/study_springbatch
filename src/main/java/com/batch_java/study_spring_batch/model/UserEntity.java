@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "USER")
 @NoArgsConstructor
 @SuperBuilder
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,8 +1,8 @@
 package com.batch_java.study_spring_batch.settlement_batch.detail;
 
 import com.batch_java.study_spring_batch.common.Batch;
-import com.batch_java.study_spring_batch.model.ApiOrder;
-import com.batch_java.study_spring_batch.model.SettleDetail;
+import com.batch_java.study_spring_batch.model.ApiOrderEntity;
+import com.batch_java.study_spring_batch.model.SettleDetailEntity;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +28,12 @@ public class SettleDetailStepConfig {
     
     @Bean
     public Step preSettleDetailStep(
-        JpaCursorItemReader<ApiOrder> preSettleDetailReader,
+        JpaCursorItemReader<ApiOrderEntity> preSettleDetailReader,
         PreSettleDetailWriter preSettleDetailWriter,
         ExecutionContextPromotionListener executionContextPromotionListener
     ) {
         return new StepBuilder("preSettleDetailStep", jobRepository)
-            .<ApiOrder, Key>chunk(5000, platformTransactionManager)
+            .<ApiOrderEntity, Key>chunk(5000, platformTransactionManager)
             .reader(preSettleDetailReader)
             .processor(new PreSettleDetailProcessor())
             .writer(preSettleDetailWriter)
@@ -43,10 +43,10 @@ public class SettleDetailStepConfig {
     
     @Bean
     @StepScope
-    public JpaCursorItemReader<ApiOrder> preSettleDetailReader(
+    public JpaCursorItemReader<ApiOrderEntity> preSettleDetailReader(
         EntityManagerFactory entityManagerFactory
     ) {
-        return new JpaCursorItemReaderBuilder<ApiOrder>()
+        return new JpaCursorItemReaderBuilder<ApiOrderEntity>()
             .name("preSettleDetailReader")
             .entityManagerFactory(entityManagerFactory)
             .queryString("SELECT a FROM ApiOrder a ORDER BY a.requestedAt")
@@ -57,10 +57,10 @@ public class SettleDetailStepConfig {
     public Step settleDetailStep(
         SettleDetailReader settleDetailReader,
         SettleDetailProcessor settleDetailProcessor,
-        JpaItemWriter<SettleDetail> settleDetailJpaItemWriter
+        JpaItemWriter<SettleDetailEntity> settleDetailJpaItemWriter
     ) {
         return new StepBuilder("settleDetailStep", jobRepository)
-            .<KeyAndCount, SettleDetail>chunk(1000, platformTransactionManager)
+            .<KeyAndCount, SettleDetailEntity>chunk(1000, platformTransactionManager)
             .reader(settleDetailReader)
             .processor(settleDetailProcessor)
             .writer(settleDetailJpaItemWriter)
@@ -75,10 +75,10 @@ public class SettleDetailStepConfig {
     }
     
     @Bean
-    public JpaItemWriter<SettleDetail> settleDetailJpaItemWriter(
+    public JpaItemWriter<SettleDetailEntity> settleDetailJpaItemWriter(
         EntityManagerFactory entityManagerFactory
     ) {
-        return new JpaItemWriterBuilder<SettleDetail>()
+        return new JpaItemWriterBuilder<SettleDetailEntity>()
             .entityManagerFactory(entityManagerFactory)
             .build();
     }

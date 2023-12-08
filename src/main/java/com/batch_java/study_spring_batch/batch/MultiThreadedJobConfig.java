@@ -1,7 +1,7 @@
 package com.batch_java.study_spring_batch.batch;
 
 import com.batch_java.study_spring_batch.common.Batch;
-import com.batch_java.study_spring_batch.model.User;
+import com.batch_java.study_spring_batch.model.UserEntity;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -35,10 +35,10 @@ public class MultiThreadedJobConfig {
     public Step step(
         JobRepository jobRepository,
         PlatformTransactionManager platformTransactionManager,
-        JpaPagingItemReader<User> jpaPagingItemReader
+        JpaPagingItemReader<UserEntity> jpaPagingItemReader
     ) {
         return new StepBuilder("step", jobRepository)
-            .<User, User>chunk(2, platformTransactionManager)
+            .<UserEntity, UserEntity>chunk(2, platformTransactionManager)
             .reader(jpaPagingItemReader)
             .writer(result -> log.info(result.toString()))
             .taskExecutor(new SimpleAsyncTaskExecutor())
@@ -46,10 +46,10 @@ public class MultiThreadedJobConfig {
     }
     
     @Bean
-    public JpaPagingItemReader<User> jobPagingItemReader(
+    public JpaPagingItemReader<UserEntity> jobPagingItemReader(
         EntityManagerFactory entityManagerFactory
     ) {
-        return new JpaPagingItemReaderBuilder<User>()
+        return new JpaPagingItemReaderBuilder<UserEntity>()
             .name("jobPagingItemReader")
             .entityManagerFactory(entityManagerFactory)
             .pageSize(2)

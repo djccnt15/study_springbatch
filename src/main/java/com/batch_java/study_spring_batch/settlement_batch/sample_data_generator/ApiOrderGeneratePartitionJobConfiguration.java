@@ -1,7 +1,7 @@
 package com.batch_java.study_spring_batch.settlement_batch.sample_data_generator;
 
 import com.batch_java.study_spring_batch.common.Batch;
-import com.batch_java.study_spring_batch.model.ApiOrder;
+import com.batch_java.study_spring_batch.model.ApiOrderEntity;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,10 +98,10 @@ public class ApiOrderGeneratePartitionJobConfiguration {
     public Step apiOrderGenerateStep(
         ApiOrderGenerateReader apiOrderGenerateReader,
         ApiOrderGenerateProcessor apiOrderGenerateProcessor,
-        ItemWriter<ApiOrder> jpaItemWriter
+        ItemWriter<ApiOrderEntity> jpaItemWriter
     ) {
         return new StepBuilder("apiOrderGenerateStep", jobRepository)
-            .<String, ApiOrder>chunk(1000, platformTransactionManager)
+            .<String, ApiOrderEntity>chunk(1000, platformTransactionManager)
             .reader(apiOrderGenerateReader)
             .processor(apiOrderGenerateProcessor)
             .writer(jpaItemWriter)
@@ -109,10 +109,10 @@ public class ApiOrderGeneratePartitionJobConfiguration {
     }
     
     @Bean
-    public ItemWriter<ApiOrder> jpaItemWriter(
+    public ItemWriter<ApiOrderEntity> jpaItemWriter(
         EntityManagerFactory entityManagerFactory
     ) {
-        return new JpaItemWriterBuilder<ApiOrder>()
+        return new JpaItemWriterBuilder<ApiOrderEntity>()
             .entityManagerFactory(entityManagerFactory)
             .build();
     }

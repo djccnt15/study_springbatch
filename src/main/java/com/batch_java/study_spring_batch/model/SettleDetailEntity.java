@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ToString
 @SuperBuilder
-public class SettleDetail {
+public class SettleDetailEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

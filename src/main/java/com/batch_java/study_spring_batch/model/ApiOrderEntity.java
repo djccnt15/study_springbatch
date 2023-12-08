@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "API_ORDER")
 @NoArgsConstructor
 @SuperBuilder
-public class ApiOrder {
+public class ApiOrderEntity {
 
     @Id
     @Column(length = 100, nullable = false)
