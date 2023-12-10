@@ -5,9 +5,6 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
@@ -21,7 +18,7 @@ class SettleDetailReader implements ItemReader<KeyAndCount>, StepExecutionListen
     private Iterator<Map.Entry<Key, Long>> iterator;
     
     @Override
-    public KeyAndCount read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public KeyAndCount read() throws Exception {
         
         if (!iterator.hasNext())
             return null;
