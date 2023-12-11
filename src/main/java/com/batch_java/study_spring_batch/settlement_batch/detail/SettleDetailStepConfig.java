@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
-// @Batch
+@Batch
 @RequiredArgsConstructor
 public class SettleDetailStepConfig {
     
