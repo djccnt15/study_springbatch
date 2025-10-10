@@ -1,4 +1,5 @@
 spring:
+  application.name: study_springbatch
   batch:
     jdbc:
       initialize-schema: always
