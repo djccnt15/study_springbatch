@@ -1,19 +1,17 @@
-# study_spring_batch
+# study_springbatch
 
 spring batch 활용 연습
 
-## Program Arguments sample
+## dependency
 
-- ApiOrderGenerate Batch
-  - 샘플 데이터 생성용 배치
+- Java 17
+- gradle
+- check `build.gradle` for other dependency
 
-```
-totalCount=10000 targetDate=20231128
-```
+## Program Arguments
 
-- SettleDetail Batch
-  - 일일 데이터 정산 배치
+- Job이름으로 원하는 작업만 실행하는 방법
 
-```
-targetDate=20231128
+```batch
+--spring.batch.job.name=basicBatchJob
 ```
