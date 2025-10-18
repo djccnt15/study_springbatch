@@ -12,3 +12,15 @@
     - `Job`과 `Step` 간의 데이터 공유나 `Job` 재시작 시 상태 복원에 사용
 - 데이터 처리 컴포넌트 구현체: 다양한 형태의 데이터를 `읽기-처리-쓰기` 방식으로 처리하는 실제 구현체
     - `ItemReader`, `ItemProcessor`, `ItemWriter`
+
+## Program Arguments
+
+### Job Name
+
+- Job 이름으로 원하는 작업만 실행하는 방법
+
+```batch
+--spring.batch.job.name=basicBatchJob
+```
+
+> `Job` 타입 빈이 한 개일 때는 생략 가능
