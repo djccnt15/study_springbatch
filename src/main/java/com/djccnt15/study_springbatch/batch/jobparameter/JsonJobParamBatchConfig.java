@@ -1,3 +1,4 @@
+/*
 package com.djccnt15.study_springbatch.batch.jobparameter;
 
 import com.djccnt15.study_springbatch.annotation.Batch;
@@ -30,7 +31,10 @@ public class JsonJobParamBatchConfig {
     }
     
     @Bean
-    public Job jsonJobParamJob(JobRepository jobRepository, Step jsonJobParamStep) {
+    public Job jsonJobParamJob(
+        JobRepository jobRepository,
+        Step jsonJobParamStep
+    ) {
         return new JobBuilder("jsonJobParamJob", jobRepository)
             .start(jsonJobParamStep)
             .build();
@@ -62,3 +66,4 @@ public class JsonJobParamBatchConfig {
         };
     }
 }
+*/
