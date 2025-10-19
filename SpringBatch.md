@@ -27,3 +27,16 @@
 ```
 
 > `Job` 타입 빈이 한 개일 때는 생략 가능
+
+## jobParameters 표기법
+
+```batch
+parameterName=parameterValue,parameterType,identificationFlag
+```
+
+- `parameterName`: 배치 `Job`에서 파라미터를 찾을 때 사용할 key 값
+- `parameterValue`: 파라미터의 실제 값
+- `parameterType`: 파라미터의 타입
+    - `java.lang.String`과 같은 FQNC(Fully Qualified Name Class) 사용. 기본값은 `String`
+- `identificationFlag`: 해당 파라미터가 `JobInstance` 식별에 사용될 파라미터인지 여부
+    - `true`이면 식별에 사용(default == `true`)
