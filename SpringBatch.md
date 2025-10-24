@@ -56,3 +56,33 @@ API 등 외부 호출로 실행하는 애플리케이션의 경우 동적 파라
 1. `Step` 빈에는 `@StepScope` 사용 금지(에러 발생), `@JobScope` 미사용 권장
     - `Step` 빈 생성과 스코프 활성화 시점이 불일치해 오류 발생
     - `Tasklet`에 `@JobScope`/`@StepScope`를 선언해 파라미터를 받아야 함
+
+## Listener
+
+### 주요 활용 예시
+
+- 단계별 모니터링과 추적: 각 `Job`/`Step`의 실행 전후 로깅
+- 실행 결과에 따른 후속 처리: `Job`과 `Step`의 실행 상태를 리스너에서 직접 확인하고 그에 따른 후속 조치
+    - `JobExecutionListener`의 `afterJob()` 메서드에서 `Job`의 종료 상태를 확인하고 종료 상태에 따른 후속 조치 가능
+- 데이터 가공과 전달: 실제 처리 로직 전후에 데이터를 추가로 정제하거나 변환
+    - `StepExecutionListener`, `ChunkListener`를 사용해 `ExecutionContext`의 데이터를 수정하거나 필요한 정보를 추가
+    - `Step` 간의 데이터 전달, 다음 처리에 필요한 정보 사전 준비 가능
+- 부가 기능 분리: 주요 처리 로직과 부가 로직을 깔끔하게 분리 가능
+    - `ChunkListener`에서 오류가 발생한 경우 `afterChunkError()` 메서드에서 관리자에게 알림 메일 등
+
+### `Listener`의 종류
+
+- `JobExecutionListener`: 전체 `Job`의 시작과 종료 감지
+- `StepExecutionListener`: 각 `Step` 단계의 실행 감지
+- `ChunkListener`: 시스템을 청크 단위로 처리 시, 반복의 시작과 종료 시점 감지
+- `ItemReadListener`/`ItemProcessListener`/`ItemWriteListener`: 개별 아이템 식별 감지
+
+### 주의 사항
+
+- 예외 처리: Spring Batch는 `JobExecutionListener`의 `beforeJob()` 또는 `StepExecutionListener`의 `beforeStep()`에서 예외가 발생 시 `Job`/`Step`이 실패한 것으로 판단함
+    - `Job`/`Step`을 중단시켜야 할 만큼 치명적인 에러가 아닌 경우는 `try`/`catch`로 직접 예외를 잡아서 무시하고 진행 필요
+- 단일 책임 원칙 준수: `Listener`는 감시 및 통제만을 담당하고, 비즈니스 로직과 분리
+- 성능 최적화
+    - `JobExecutionListener`/`StepExecutionListener`: `Job`/`Step` 실행당 한 번씩만 실행되므로 비교적 가벼움
+    - `ItemReadListener`/`ItemProcessListener`: 아이템마다 실행되어 비교적 무거음
+    - 리소스 사용 최소화: 데이터베이스 연결, 파일 I/O, 외부 API 호출 등 `Listener` 내 로직 최소화. `Item` 단위 `Listener`에서 특히 중요
