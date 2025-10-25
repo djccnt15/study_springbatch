@@ -86,3 +86,22 @@ API 등 외부 호출로 실행하는 애플리케이션의 경우 동적 파라
     - `JobExecutionListener`/`StepExecutionListener`: `Job`/`Step` 실행당 한 번씩만 실행되므로 비교적 가벼움
     - `ItemReadListener`/`ItemProcessListener`: 아이템마다 실행되어 비교적 무거음
     - 리소스 사용 최소화: 데이터베이스 연결, 파일 I/O, 외부 API 호출 등 `Listener` 내 로직 최소화. `Item` 단위 `Listener`에서 특히 중요
+
+## Job ExecutionContext
+
+Spring Batch는 배치 작업의 재현 가능성(Repeatability)과 일관성(Consistency)을 보장하는 것을 기본 철학으로 하기 때문에, `JobParameters`는 불변(immutable)하게 설계됨
+
+- 재현 가능성: 동일한 `JobParameters`로 실행한 `Job`은 항상 동일한 결과를 생성해야 함
+    - 실행 중간에 `JobParameters`가 변경되면 이를 보장할 수 없음
+- 추적 가능성: 배치 작업의 실행 기록(`JobInstance`, `JobExecution`)과 `JobParameters`는 메타데이터 저장소에 저장됨
+    - `JobParameters`가 변경 가능하다면 기록과 실제 작업의 불일치가 발생할 수 있음
+
+`ExecutionContext`를 활용하면 커스텀 컬렉션의 마지막 처리 인덱스나 집계 중간 결과물 같은 데이터를 저장할 수 있고, Batch 재시작 시 `ExecutionContext`의 데이터를 자동으로 복원하므로, 중단된 지점부터 처리를 이어갈 수 있음
+
+> 외부에서 값을 받는 것이 훨씬 더 안전하고 유연하기 때문에 가능한 `JobParameters` 사용 권장  
+> JobExecutionListener`/`ExecutionContext`는 외부에서 값을 받을 수 없는 경우에만 사용
+
+`Step` 간의 데이터 공유가 필요한 경우 `ExecutionContextPromotionListener`를 사용하면 boilerplate를 줄일 수 있음
+
+> 다만 `Step`은 가능한 한 독립적으로 설계하여 재사용성과 유지보수성을 높이는 것이 좋음  
+> 불가피한 경우가 아니라면 `Step` 간 데이터 의존성은 최소화  
