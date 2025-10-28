@@ -9,11 +9,11 @@ import lombok.Data;
 @Builder
 public class FlatFileItemWriteModel {
     
-    private String victimId;
+    private String id;
     
-    private String victimName;
+    private String name;
     
-    private String executionDate;
+    private String date;
     
-    private String causeOfDeath;
+    private String cause;
 }

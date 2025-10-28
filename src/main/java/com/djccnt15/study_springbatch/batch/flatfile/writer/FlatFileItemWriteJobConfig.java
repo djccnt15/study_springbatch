@@ -80,8 +80,8 @@ public class FlatFileItemWriteJobConfig {
             .delimited()
             .delimiter(",")
             .sourceType(FlatFileItemWriteModel.class)
-            .names("id", "name", "date", "cause")
-            .headerCallback(writer -> writer.write("ID,이름,일자,원인"))
+            .names("id", "name", "date", "cause")  // 문자열로 변환할 객체의 필드 이름 지정
+            .headerCallback(it -> it.write("ID,이름,일자,원인"))
             .footerCallback(it -> it.write("============"))
             .build();
     }
