@@ -1,9 +1,11 @@
-package com.djccnt15.study_springbatch.batch;
+package com.djccnt15.study_springbatch.batch.flatfile.json;
 
+import com.djccnt15.study_springbatch.annotation.Batch;
 import com.djccnt15.study_springbatch.model.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
@@ -16,54 +18,60 @@ import org.springframework.batch.item.json.JsonFileItemWriter;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonFileItemWriterBuilder;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.PathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
-// @Batch
-public class JsonBatchConfiguration {
+@Batch
+public class JsonFileBatchConfig {
 
     @Bean
-    public Job job(
+    public Job jsonFileBatchJob(
         JobRepository jobRepository,
-        Step step
+        Step jsonFileStep
     ) {
-        return new JobBuilder("itemReaderJob", jobRepository)
+        return new JobBuilder("jsonFileBatchJob", jobRepository)
             .incrementer(new RunIdIncrementer())
-            .start(step)
+            .start(jsonFileStep)
             .build();
     }
     
     @Bean
-    public Step step(
+    public Step jsonFileBatchStep(
         JobRepository jobRepository,
         PlatformTransactionManager transactionManager,
-        ItemReader<UserEntity> jsonItemReader,
+        ItemReader<UserEntity> jsonFileItemReader,
         ItemWriter<UserEntity> jsonFileItemWriter
     ) {
-        return new StepBuilder("step", jobRepository)
+        return new StepBuilder("jsonFileBatchStep", jobRepository)
             .<UserEntity, UserEntity>chunk(2, transactionManager)
-            .reader(jsonItemReader)
+            .reader(jsonFileItemReader)
             .writer(jsonFileItemWriter)
             .build();
     }
     
     @Bean
-    public JsonItemReader<UserEntity> jsonItemReader() {
+    @StepScope
+    public JsonItemReader<UserEntity> jsonFileItemReader(
+        @Value("#{jobParameters['inputFile']}") String inputFile
+    ) {
         return new JsonItemReaderBuilder<UserEntity>()
-            .name("jsonItemReader")
-            .resource(new ClassPathResource("users.json"))
+            .name("jsonFileItemReader")
+            .resource(new FileSystemResource(inputFile))
             .jsonObjectReader(new JacksonJsonObjectReader<>(UserEntity.class))
             .build();
     }
     
     @Bean
-    public JsonFileItemWriter<UserEntity> jsonFileItemWriter() {
+    @StepScope
+    public JsonFileItemWriter<UserEntity> jsonFileItemWriter(
+        @Value("#{jobParameters['outputDir']}") String outputDir
+    ) {
         return new JsonFileItemWriterBuilder<UserEntity>()
             .name("jsonFileItemWriter")
-            .resource(new PathResource("src/main/resources/new_user.json"))
+            .resource(new FileSystemResource(outputDir + "/new_user.json"))
             .jsonObjectMarshaller(new JacksonJsonObjectMarshaller<>())
             .build();
     }
