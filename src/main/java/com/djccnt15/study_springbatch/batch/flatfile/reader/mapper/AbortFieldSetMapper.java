@@ -1,7 +1,7 @@
-package com.djccnt15.study_springbatch.batch.flatfile.mapper;
+package com.djccnt15.study_springbatch.batch.flatfile.reader.mapper;
 
-import com.djccnt15.study_springbatch.batch.flatfile.model.AbortLogLine;
-import com.djccnt15.study_springbatch.batch.flatfile.model.SystemLogLine;
+import com.djccnt15.study_springbatch.batch.flatfile.reader.model.AbortLogLine;
+import com.djccnt15.study_springbatch.batch.flatfile.reader.model.SystemLogLine;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;

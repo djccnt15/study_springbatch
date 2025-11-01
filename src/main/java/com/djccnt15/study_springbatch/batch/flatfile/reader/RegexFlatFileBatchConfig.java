@@ -1,7 +1,7 @@
 package com.djccnt15.study_springbatch.batch.flatfile.reader;
 
 import com.djccnt15.study_springbatch.annotation.Batch;
-import com.djccnt15.study_springbatch.batch.flatfile.model.RegexLogLine;
+import com.djccnt15.study_springbatch.batch.flatfile.reader.model.RegexLogLine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;

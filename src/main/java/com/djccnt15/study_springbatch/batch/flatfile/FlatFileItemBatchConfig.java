@@ -1,7 +1,7 @@
 package com.djccnt15.study_springbatch.batch.flatfile;
 
 import com.djccnt15.study_springbatch.annotation.Batch;
-import com.djccnt15.study_springbatch.model.UserEntity;
+import com.djccnt15.study_springbatch.db.model.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

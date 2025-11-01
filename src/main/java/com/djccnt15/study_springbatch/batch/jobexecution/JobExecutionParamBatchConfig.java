@@ -1,6 +1,7 @@
 package com.djccnt15.study_springbatch.batch.jobexecution;
 
 import com.djccnt15.study_springbatch.annotation.Batch;
+import com.djccnt15.study_springbatch.batch.jobexecution.validator.JobExecutionParamValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;

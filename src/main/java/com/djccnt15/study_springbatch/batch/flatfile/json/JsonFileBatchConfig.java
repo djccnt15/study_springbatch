@@ -1,7 +1,7 @@
 package com.djccnt15.study_springbatch.batch.flatfile.json;
 
 import com.djccnt15.study_springbatch.annotation.Batch;
-import com.djccnt15.study_springbatch.model.UserEntity;
+import com.djccnt15.study_springbatch.db.model.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -30,11 +30,11 @@ public class JsonFileBatchConfig {
     @Bean
     public Job jsonFileBatchJob(
         JobRepository jobRepository,
-        Step jsonFileStep
+        Step jsonFileBatchStep
     ) {
         return new JobBuilder("jsonFileBatchJob", jobRepository)
             .incrementer(new RunIdIncrementer())
-            .start(jsonFileStep)
+            .start(jsonFileBatchStep)
             .build();
     }
     

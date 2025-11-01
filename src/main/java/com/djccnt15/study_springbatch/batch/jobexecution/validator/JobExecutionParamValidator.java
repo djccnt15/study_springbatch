@@ -1,4 +1,4 @@
-package com.djccnt15.study_springbatch.batch.jobexecution;
+package com.djccnt15.study_springbatch.batch.jobexecution.validator;
 
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;

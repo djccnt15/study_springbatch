@@ -1,4 +1,4 @@
-package com.djccnt15.study_springbatch.batch.flatfile.model;
+package com.djccnt15.study_springbatch.batch.flatfile.reader.model;
 
 import lombok.Data;
 import lombok.experimental.SuperBuilder;

@@ -1,7 +1,7 @@
 package com.djccnt15.study_springbatch.batch.flatfile.writer;
 
 import com.djccnt15.study_springbatch.annotation.Batch;
-import com.djccnt15.study_springbatch.batch.flatfile.model.FlatFileItemWriteModel;
+import com.djccnt15.study_springbatch.batch.flatfile.writer.model.FlatFileItemWriteModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

@@ -1,10 +1,10 @@
 package com.djccnt15.study_springbatch.batch.flatfile.reader;
 
 import com.djccnt15.study_springbatch.annotation.Batch;
-import com.djccnt15.study_springbatch.batch.flatfile.mapper.AbortFieldSetMapper;
-import com.djccnt15.study_springbatch.batch.flatfile.mapper.CollectFieldSetMapper;
-import com.djccnt15.study_springbatch.batch.flatfile.mapper.ErrorFieldSetMapper;
-import com.djccnt15.study_springbatch.batch.flatfile.model.SystemLogLine;
+import com.djccnt15.study_springbatch.batch.flatfile.reader.mapper.AbortFieldSetMapper;
+import com.djccnt15.study_springbatch.batch.flatfile.reader.mapper.CollectFieldSetMapper;
+import com.djccnt15.study_springbatch.batch.flatfile.reader.mapper.ErrorFieldSetMapper;
+import com.djccnt15.study_springbatch.batch.flatfile.reader.model.SystemLogLine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;

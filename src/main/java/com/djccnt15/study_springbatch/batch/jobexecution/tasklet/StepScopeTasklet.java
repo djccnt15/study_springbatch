@@ -1,4 +1,4 @@
-package com.djccnt15.study_springbatch.batch.jobexecution;
+package com.djccnt15.study_springbatch.batch.jobexecution.tasklet;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
