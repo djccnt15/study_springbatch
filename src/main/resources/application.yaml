@@ -1,16 +1,16 @@
 spring:
   application.name: study_springbatch
   output.ansi.enabled: always
-  batch.jdbc.initialize-schema: always
+  batch.jdbc.initialize-schema: always  # TODO. change to `validate`
   datasource:
-    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-    # url: jdbc:mysql://localhost:3306/spring_batch?useSSL=false&useUnicode=true&allowPublicKeyRetrieval=true
-    # driver-class-name: com.mysql.cj.jdbc.Driver
-    # username: root
-    # password: admin1015*
+    # url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+    # driver-class-name: org.h2.Driver
+    # username: sa
+    # password:
+    url: jdbc:mysql://localhost:3306/spring_batch?useCursorFetch=true&fetchSize=1000
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     # show-sql: true
     hibernate.ddl-auto: create  # TODO. change to `validate`
@@ -18,4 +18,10 @@ spring:
       format_sql: true
       highlight_sql: true
       use_sql_comment: true
-      dialect: org.hibernate.dialect.H2Dialect
+      # dialect: org.hibernate.dialect.H2Dialect
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    # TODO. remove or disable for sql initialize option for production
+    defer-datasource-initialization: true  # delays running `data.sql` after create JPA entity tables
+  sql.init:  # run `schema.sql`, `data.sql`
+    mode: always
+    platform: test  # runs `schema-{platform}.sql`, `data-{platform}.sql` if exists
