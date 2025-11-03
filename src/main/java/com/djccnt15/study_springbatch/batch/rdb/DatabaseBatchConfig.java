@@ -1,9 +1,11 @@
-package com.djccnt15.study_springbatch.batch;
+package com.djccnt15.study_springbatch.batch.rdb;
 
-import com.djccnt15.study_springbatch.converter.UserConverter;
-import com.djccnt15.study_springbatch.model.UserEntity;
-import com.djccnt15.study_springbatch.model.UserNewEntity;
+import com.djccnt15.study_springbatch.annotation.Batch;
+import com.djccnt15.study_springbatch.batch.rdb.converter.UserConverter;
+import com.djccnt15.study_springbatch.db.model.UserEntity;
+import com.djccnt15.study_springbatch.db.model.UserNewEntity;
 import jakarta.persistence.EntityManagerFactory;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -25,32 +27,35 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @Slf4j
-// @Batch
-public class DatabaseBatchConfiguration {
-
+@Batch
+@RequiredArgsConstructor
+public class DatabaseBatchConfig {
+    
+    private final UserConverter userConverter;
+    
     @Bean
-    public Job job(
+    public Job databaseBatchJob(
         JobRepository jobRepository,
-        Step step
+        Step databaseBatchStep
     ) {
-        return new JobBuilder("itemReaderJob", jobRepository)
+        return new JobBuilder("databaseBatchJob", jobRepository)
             .incrementer(new RunIdIncrementer())
-            .start(step)
+            .start(databaseBatchStep)
             .build();
     }
     
     @Bean
-    public Step step(
+    public Step databaseBatchStep(
         JobRepository jobRepository,
         PlatformTransactionManager transactionManager,
         ItemReader<UserEntity> jpaCursorItemReader,
-        ItemProcessor<UserEntity, UserNewEntity> itemProcessor,
+        ItemProcessor<UserEntity, UserNewEntity> databaseBatchItemProcessor,
         ItemWriter<UserNewEntity> jdbcItemWriter
     ) {
-        return new StepBuilder("step", jobRepository)
+        return new StepBuilder("databaseBatchStep", jobRepository)
             .<UserEntity, UserNewEntity>chunk(2, transactionManager)
             .reader(jpaCursorItemReader)
-            .processor(itemProcessor)
+            .processor(databaseBatchItemProcessor)
             // .writer(System.out::println)
             .writer(jdbcItemWriter)
             .faultTolerant()
@@ -94,9 +99,7 @@ public class DatabaseBatchConfiguration {
     }
     
     @Bean
-    public ItemWriter<UserNewEntity> jdbcItemWriter(
-        DataSource dataSource
-    ) {
+    public ItemWriter<UserNewEntity> jdbcItemWriter(DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<UserNewEntity>()
             .dataSource(dataSource)
             .sql("""
@@ -108,10 +111,10 @@ public class DatabaseBatchConfiguration {
     }
     
     @Bean
-    public ItemProcessor<UserEntity, UserNewEntity> itemProcessor() {
+    public ItemProcessor<UserEntity, UserNewEntity> databaseBatchItemProcessor() {
         return user -> {
             user.setAge(user.getAge() * 2);
-            return new UserConverter().toNewUser(user);
+            return userConverter.toNewUser(user);
         };
     }
 }
