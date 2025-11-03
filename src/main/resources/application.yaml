@@ -25,3 +25,6 @@ spring:
   sql.init:  # run `schema.sql`, `data.sql`
     mode: always
     platform: test  # runs `schema-{platform}.sql`, `data-{platform}.sql` if exists
+logging:
+  level:
+    org.springframework.batch.item.database: DEBUG
