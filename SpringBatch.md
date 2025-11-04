@@ -105,3 +105,45 @@ Spring Batch는 배치 작업의 재현 가능성(Repeatability)과 일관성(Co
 
 > 다만 `Step`은 가능한 한 독립적으로 설계하여 재사용성과 유지보수성을 높이는 것이 좋음  
 > 불가피한 경우가 아니라면 `Step` 간 데이터 의존성은 최소화  
+
+## Spring Batch와 RDB
+
+- 커서 기반 처리(`JdbcCursorItemReader`)
+    - 데이터베이스와 연결을 유지하면서 데이터를 순차적으로 읽음
+    - 하나의 커넥션으로 데이터를 스트리밍 처리
+    - 메모리는 최소한으로 사용하면서 최대한의 성능 보장
+
+- 페이징 기반 처리(`JdbcPagingItemReader`)
+    - 데이터를 정확한 크기로 잘라서 순차적으로 처리
+    - 각 페이지마다 새로운 쿼리를 날려 안정성 보장
+
+### JDBC 드라이버의 내부 최적화
+
+- `ResultSet` 내부 버퍼링
+    - JDBC 드라이버는 기본적으로 여러 개의 row를 미리 가져와 `ResultSet`의 내부 버퍼에 저장함. `ResultSet.next()`가 호출될 때마다 버퍼에서 데이터를 하나씩 출력함
+    - ❗MySQL 드라이버는 `useCursorFetch=true` 옵션 필요  
+- 커서 연속성
+    - `JdbcCursorItemReader`가 `Step` 트랜잭션과 별도의 데이터베이스 커넥션을 사용하여 청크 처리마다 트랜잭션을 새로 시작하지 않고, 안전하게 데이터를 계속 읽음
+- 스냅샷 읽기
+    - `ItemReader`가 조회하는 데이터를 `Step`에서 변경하더라도 `ItemReader`는 최초 조회 시점의 스냅샷을 고정하여 변화의 영향을 받지 않음
+
+### `JdbcCursorItemReader`의 `ORDER BY` 설정
+
+`Step` 실패 후 `Step`이 재시작되면 `JdbcCursorItemReader`는 `jumpToItem()` 메서드를 호출해 이전에 실패한 지점부터 다시 시작함. 이때 `ResultSet.next()`를 호출해서 실패 지점까지 커서를 이동시키는데, 만약 쿼리 결과의 순서가 매번 다르다면 `ResultSet.next()`로 이동한 지점이 이전 실행의 그 지점이라고 보장할 수 없음  
+
+> `JdbcCursorItemReader`를 사용할 때도 반드시 유니크한 값을 포함한 `ORDER BY` 절을 추가해야 함
+
+### `JdbcPagingItemReader`의 페이징 방식
+
+`OFFSET` 기반 페이징은 DB는 결과셋을 정렬한 후, `OFFSET` 만큼 건너뛰고 `LIMIT` 개수만큼 데이터를 출력함. 따라서 쿼리가 진행될수록 DB는 단순히 정렬을 위해서만 읽은 후 버리는 데이터가 늘어나 성능 저하가 발생함  
+
+`Keyset` 기반 페이징은 이전 페이지의 마지막 키(`id`) 값을 기준으로 그 다음 데이터를 가져온다. 이전에 가져온 마지막 값 이후부터 읽어오므로 성능이 일정하게 유지됨  
+
+> Spring Batch가 사용하는 `JdbcPagingItemReader`는 `Keyset` 기반 페이징 수행
+
+### 벌크 INSERT를 위한 옵션
+
+- MySQL: `rewriteBatchedStatements=true`
+- PostgreSQL: `reWriteBatchedInserts=true`
+
+> 다만 MySQL은 이 경우 `GenerationType.IDENTITY`으로 자동 생성되는 ID 칼럼을 사용할 수 없고, 반드시 `GenerationType.SEQUENCE`을 사용해서 ID를 별도로 생성해줘야 한다.  
