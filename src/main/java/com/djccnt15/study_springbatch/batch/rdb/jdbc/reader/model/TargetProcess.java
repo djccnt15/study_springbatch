@@ -1,0 +1,25 @@
+package com.djccnt15.study_springbatch.batch.rdb.jdbc.reader.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class TargetProcess {
+    
+    private Long id;
+    
+    private String name;
+    
+    private String processId;
+    
+    private LocalDateTime terminatedAt;
+    
+    private String status;
+}
