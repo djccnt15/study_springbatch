@@ -66,6 +66,7 @@ public class DatabaseBatchConfig {
             .build();
     }
     
+    // JpaPagingItemReader는 내부적으로 `OFFSET` 기반 페이징을 사용하기 때문에 정합성/성능 측면에서 문제를 발생시킴. 비추천
     @Bean
     public ItemReader<UserEntity> jpaPagingItemReader(
         EntityManagerFactory entityManagerFactory
@@ -75,6 +76,7 @@ public class DatabaseBatchConfig {
             .entityManagerFactory(entityManagerFactory)
             .queryString("SELECT u FROM User u ORDER BY u.id")  // 실제 테이블 명 x, JPA 클래스 이름 사용
             .pageSize(3)
+            .transacted(false)  // true일 경우 read 중간에 commit이 발생해 reader가 데이터를 변경할 수 있음
             .build();
     }
 

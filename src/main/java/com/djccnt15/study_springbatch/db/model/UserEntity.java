@@ -1,4 +1,4 @@
-package com.djccnt15.study_springbatch.model;
+package com.djccnt15.study_springbatch.db.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,11 +7,11 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
-@Table(name = "USER_NEW")
+@Table(name = "USER_MEMBER")
 @NoArgsConstructor
 @SuperBuilder
-public class UserNewEntity {
-    
+public class UserEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
