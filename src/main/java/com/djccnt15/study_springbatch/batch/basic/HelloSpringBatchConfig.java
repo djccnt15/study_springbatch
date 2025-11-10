@@ -7,11 +7,11 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -26,22 +26,21 @@ public class HelloSpringBatchConfig {
     @Bean
     public Job helloWorldJob(){
         return new JobBuilder("helloWorldJob", jobRepository)
-            .start(helloWorldStep(null))
+            .incrementer(new RunIdIncrementer())  // auto adds run.id
+            .start(helloWorldStep())
             .build();
     }
     
     @Bean
-    public Step helloWorldStep(Tasklet helloWorldTasklet) {
+    public Step helloWorldStep() {
         return new StepBuilder("helloWorldStep", jobRepository)
-            .tasklet(helloWorldTasklet, transactionManager)
+            .tasklet(helloWorldTasklet(), transactionManager)
             .build();
     }
     
     @Bean
     @StepScope
-    public Tasklet helloWorldTasklet(
-        @Value("#{jobParameters['helloId']}") String helloId
-    ) {
+    public Tasklet helloWorldTasklet() {
         return (contribution, chunkContext) -> {
             System.out.println("=== HELLO SPRING BATCH ===");
             return RepeatStatus.FINISHED;
