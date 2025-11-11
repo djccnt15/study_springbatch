@@ -14,7 +14,7 @@ public class CommandAnalyzer implements ItemProcessor<SystemLog, CommandReport> 
         report.setExecutorId(systemLog.getUserId());
         report.setTimestamp(systemLog.getExecutedAt());
         
-        // 명령어 분석 및 위험도 평가 💀
+        // 명령어 분석 및 위험도 평가
         if (systemLog.getRawCommand().contains("rm -rf")) {
             report.setAction("시스템 파일 제거 시도");
             report.setSeverity("CRITICAL");
@@ -26,14 +26,14 @@ public class CommandAnalyzer implements ItemProcessor<SystemLog, CommandReport> 
             report.setSeverity("LOW");
         }
         
-        log.info("⚔️ {}의 행적 분석 완료: {}",
+        log.info("{}의 행적 분석 완료: {}",
             systemLog.getUserId(),
             report.getAction());
         return report;
     }
     
     private String analyzeCommand(String command) {
-        // 일반 명령어 분석 로직 💀
+        // 일반 명령어 분석 로직
         return "일반 시스템 명령어 실행";
     }
 }
