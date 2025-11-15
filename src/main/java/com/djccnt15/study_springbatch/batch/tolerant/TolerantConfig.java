@@ -2,6 +2,7 @@ package com.djccnt15.study_springbatch.batch.tolerant;
 
 import com.djccnt15.study_springbatch.batch.tolerant.model.Scream;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,25 @@ public class TolerantConfig {
         };
     }
     
+    @Bean
+    public SkipListener<Scream, Scream> tolerantSkipListener() {
+        return new SkipListener<>() {
+            @Override
+            public void onSkipInRead(Throwable t) {
+                System.out.println("[onSkipInRead] 처형 불가 판정! 불가 원인 = " + t.getMessage());
+            }
+            
+            @Override
+            public void onSkipInProcess(Scream scream, Throwable t) {
+                System.out.println("[onSkipInProcess] 처형 불가 판정! 생존자: [" + scream.getId() + "]. 저항 패턴 = " + t.getMessage());
+            }
+            
+            @Override
+            public void onSkipInWrite(Scream scream, Throwable t) {
+                System.out.println("[onSkipInWrite] 처형 불가 판정! 생존자: [" + scream.getId() + "]. 저항 패턴 = " + t.getMessage());
+            }
+        };
+    }
     
     @Bean
     public ListItemReader<Scream> tolerantRetryReader() {
