@@ -21,7 +21,6 @@ import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.ExceptionClassifierRetryPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.policy.TimeoutRetryPolicy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.client.HttpServerErrorException;
 

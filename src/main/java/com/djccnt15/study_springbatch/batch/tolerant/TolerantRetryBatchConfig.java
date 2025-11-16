@@ -21,15 +21,15 @@ public class TolerantRetryBatchConfig {
     private final PlatformTransactionManager transactionManager;
     
     @Bean
-    public Job tolerantRetryJob() {
-        return new JobBuilder("tolerantRetryJob", jobRepository)
-            .start(tolerantRetryStep())
+    public Job tolerantRetryItemJob() {
+        return new JobBuilder("tolerantRetryItemJob", jobRepository)
+            .start(tolerantRetryItemStep())
             .build();
     }
     
     @Bean
-    public Step tolerantRetryStep() {
-        return new StepBuilder("tolerantRetryStep", jobRepository)
+    public Step tolerantRetryItemStep() {
+        return new StepBuilder("tolerantRetryItemStep", jobRepository)
             .<Integer, Integer>chunk(10, transactionManager)
             .reader(tolerantRetryItemReader())
             .processor(tolerantRetryItemProcessor())

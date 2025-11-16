@@ -47,7 +47,7 @@ public class TolerantRetryProcessorBatchConfig {
             .retry(IllegalStateException.class)
             .retryLimit(3)  // 청크 전체가 재처리
             .listener(tolerantRetryListener)
-            .processorNonTransactional()  // 청크 비트랜잭션 처리, 이미 처리된 아이템에 대한 불필요한 재시도 방지
+            .processorNonTransactional()  // 청크 비트랜잭션 처리 및 캐시 사용, 처리된 아이템에 대한 불필요한 재시도 방지
             // ItemProcessor에서 예외가 발생하면 여전히 청크 단위의 트랜잭션은 롤백
             .build();
     }
