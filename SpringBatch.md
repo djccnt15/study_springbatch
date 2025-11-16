@@ -147,3 +147,12 @@ Spring Batch는 배치 작업의 재현 가능성(Repeatability)과 일관성(Co
 - PostgreSQL: `reWriteBatchedInserts=true`
 
 > 다만 MySQL은 이 경우 `GenerationType.IDENTITY`으로 자동 생성되는 ID 칼럼을 사용할 수 없고, 반드시 `GenerationType.SEQUENCE`을 사용해서 ID를 별도로 생성해줘야 한다.  
+
+## 내결함성을 위한 `faultTolerant`
+
+- `retry`: 일시적인 오류를 극복하기 위한 재시도 메커니즘
+    - `ItemProcessor`: 개별 아이템 단위로 재시도
+    - `ItemWriter`: 청크 단위로 재시도
+- `skip`: 영구적인 오류를 가진 아이템을 무시하고 진행하기 위한 매커니즘
+    - `ItemReader`: 트랜잭션 롤백 없이 다음 아이템으로 진행
+    - `ItemWriter`: 스캔 모드를 통해 개별 아이템 단위로 처리
