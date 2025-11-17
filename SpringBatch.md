@@ -100,6 +100,8 @@ Spring Batch는 배치 작업의 재현 가능성(Repeatability)과 일관성(Co
 - 추적 가능성: 배치 작업의 실행 기록(`JobInstance`, `JobExecution`)과 `JobParameters`는 메타데이터 저장소에 저장됨
     - `JobParameters`가 변경 가능하다면 기록과 실제 작업의 불일치가 발생할 수 있음
 
+> `jobParameters`는 동일한 `Job`을 서로 다른 `JobInstance`로 구분하는 핵심 요소  
+
 `ExecutionContext`를 활용하면 커스텀 컬렉션의 마지막 처리 인덱스나 집계 중간 결과물 같은 데이터를 저장할 수 있고, Batch 재시작 시 `ExecutionContext`의 데이터를 자동으로 복원하므로, 중단된 지점부터 처리를 이어갈 수 있음
 
 > 외부에서 값을 받는 것이 훨씬 더 안전하고 유연하기 때문에 가능한 `JobParameters` 사용 권장  
@@ -109,6 +111,41 @@ Spring Batch는 배치 작업의 재현 가능성(Repeatability)과 일관성(Co
 
 > 다만 `Step`은 가능한 한 독립적으로 설계하여 재사용성과 유지보수성을 높이는 것이 좋음  
 > 불가피한 경우가 아니라면 `Step` 간 데이터 의존성은 최소화  
+
+### JobExecution
+
+`JobExecution`은 아래와 같이 `Job`의 실행 상태를 `BatchStatus` enum으로 관리
+
+0. `COMPLETED`: 배치 작업이 성공적으로 완료
+0. `STARTING`: 배치 작업이 실행되기 직전 상태
+0. `STARTED`: 배치 작업이 현재 실행 중인 상태
+0. `STOPPING`: 배치 작업이 중지 요청을 받아 중지 진행 중인 상태
+0. `STOPPED`: 배치 작업이 요청에 의해 중지된 상태
+0. `FAILED`: 배치 작업이 실행 중 오류로 인해 실패한 상태
+0. `ABANDONED`: 배치 작업이 비정상 종료되어 재시작할 수 없는 상태
+0. `UNKNOWN`: 배치 작업의 상태를 확인할 수 없는 불확실한 상태
+
+### StepExecution
+
+`StepExecution`은 `Step`의 실행 상태 및 `Step`에 대한 아래 정보들을 관리하며, 해당 `Step`이 실제로 시작될 때만 생성  
+
+- 현재 상태: `Step`이 현재 어떤 상태인지를 나타내는 `BatchStatus`
+- 읽기/쓰기 카운트: 성공적으로 읽거나 쓴 아이템의 수
+- 커밋/롤백 카운트: 트랜잭션 처리 횟수
+- 스킵 카운트: 청크 처리 중 건너뛴 아이템의 수
+- 시작/종료 시간: `Step` 실행의 시간적 정보
+- 종료 코드: `Step` 실행의 최종 결과 코드
+- 예외 정보: 실패 시 발생한 오류에 대한 상세 정보
+
+`StepExecution`의 전략적 활용 방안 예시  
+
+- 성능 모니터링: 각 Step의 처리 시간과 처리량을 분석하여 병목 지점 식별
+- 오류 패턴 분석: 특정 데이터나 조건에서 반복적으로 오류가 발생하는지 파악
+- 자원 할당 최적화: 읽기/쓰기/처리 비율을 분석하여 리소스 할당 조정
+
+### ExecutionContext
+
+비즈니스 로직 처리 중에 발생하는 사용자 정의 데이터를 관리하기 위한 Context
 
 ## Spring Batch와 RDB
 
