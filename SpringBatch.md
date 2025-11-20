@@ -28,6 +28,22 @@
 
 > `Job` 타입 빈이 한 개일 때는 생략 가능
 
+## ExitCode
+
+ExitCode 설정 후 출력 방법
+
+- `cmd`로 실행 시
+
+```bat
+echo %ERRORLEVEL%
+```
+
+- `PowerShell`로 실행 시
+
+```powershell
+$LASTEXITCODE
+```
+
 ## jobParameters 표기법
 
 ```batch
