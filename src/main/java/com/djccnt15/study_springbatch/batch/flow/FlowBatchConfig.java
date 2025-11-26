@@ -1,13 +1,20 @@
 package com.djccnt15.study_springbatch.batch.flow;
 
 import com.djccnt15.study_springbatch.batch.flow.model.Lecture;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.builder.FlowBuilder;
+import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +24,68 @@ import static com.djccnt15.study_springbatch.batch.flow.FlowStringConst.*;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class FlowBatchConfig {
+    
+    private final JobRepository jobRepository;
+    private final PlatformTransactionManager transactionManager;
+    
+    @Bean
+    public Flow lectureValidationFlow(
+        Step validateContentStep,
+        Step checkPlagiarismStep,
+        Step verifyPricingStep,
+        Step pricingWarningStep
+    ) {
+        return new FlowBuilder<Flow>("lectureValidationFlow")
+            .start(validateContentStep)
+            .next(checkPlagiarismStep)
+            .on(PLAGIARISM_DETECTED).fail()  // 표절 감지되면 즉시 실패 처리
+            .from(checkPlagiarismStep)
+            .on(COMPLETED).to(verifyPricingStep)
+            .on(TOO_EXPENSIVE).to(pricingWarningStep)  // 가격이 과도하면 경고 처리
+            .from(verifyPricingStep)
+            .on("*").end()  // 나머지 모든 경우는 정상 종료
+            .build();
+    }
+    
+    @Bean
+    public Step validateContentStep(Tasklet analyzeLectureTasklet) {
+        return new StepBuilder("validateContentStep", jobRepository)
+            .tasklet(analyzeLectureTasklet, transactionManager)
+            .allowStartIfComplete(true)
+            .build();
+    }
+    
+    @Bean
+    public Step checkPlagiarismStep() {
+        return new StepBuilder("checkPlagiarismStep", jobRepository)
+            .tasklet((contribution, chunkContext) -> {
+                log.warn("plagiarism detected business logic..");
+                return RepeatStatus.FINISHED;
+            }, transactionManager)
+            .build();
+    }
+    
+    @Bean
+    public Step verifyPricingStep() {
+        return new StepBuilder("verifyPricingStep", jobRepository)
+            .tasklet((contribution, chunkContext) -> {
+                log.warn("price gouger business logic..");
+                return RepeatStatus.FINISHED;
+            }, transactionManager)
+            .build();
+    }
+    
+    @Bean
+    public Step pricingWarningStep() {
+        return new StepBuilder("pricingWarningStep", jobRepository)
+            .tasklet((contribution, chunkContext) -> {
+                log.error("price warning logic..");
+                return RepeatStatus.FINISHED;
+            }, transactionManager)
+            .build();
+    }
     
     @Bean
     public List<Lecture> lectureList() {
