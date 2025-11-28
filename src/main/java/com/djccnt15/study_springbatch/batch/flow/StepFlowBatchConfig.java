@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,7 @@ public class StepFlowBatchConfig {
         Step stepFlowStep4
     ) {
         return new JobBuilder("stepFlowJob", jobRepository)
+            .incrementer(new RunIdIncrementer())  // auto adds run.id
             .start(stepFlowStep1)  // 시작
             // 와일드카드(*, ?)를 이용한 패턴 매칭 규칙으로 여러 ExitCode에 대한 규칙을 지정할 수 있음
             .on("*").to(stepFlowStep2)  // 이전 단계의 수행 결과에 따라 다음 단계 싷행 여부 지정
