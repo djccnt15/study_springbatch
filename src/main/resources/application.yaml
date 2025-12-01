@@ -7,7 +7,7 @@ spring:
     # driver-class-name: org.h2.Driver
     # username: sa
     # password:
-    url: jdbc:mysql://localhost:3306/spring_batch?useCursorFetch=true&fetchSize=1000
+    url: jdbc:mysql://localhost:3306/spring_batch?useCursorFetch=true&fetchSize=1000&rewriteBatchedStatements=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
