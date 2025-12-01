@@ -27,9 +27,9 @@ public class MultiThreadJobConfig {
     private final EntityManagerFactory entityManagerFactory;
     
     @Bean
-    public Job multiThreadJob(Step step) {
+    public Job multiThreadJob(Step multiThreadStep) {
         return new JobBuilder("multiThreadJob", jobRepository)
-            .start(step)
+            .start(multiThreadStep)
             .incrementer(new RunIdIncrementer())
             .build();
     }

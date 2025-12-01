@@ -50,6 +50,16 @@ public class FlowBatchConfig {
     }
     
     @Bean
+    public Step notifyInstructorStep() {
+        return new StepBuilder("notifyInstructorStep", jobRepository)
+            .tasklet((contribution, chunkContext) -> {
+                log.info("notifyInstructorStep 시작");
+                return RepeatStatus.FINISHED;
+            }, transactionManager)
+            .build();
+    }
+    
+    @Bean
     public Step validateContentStep(Tasklet analyzeLectureTasklet) {
         return new StepBuilder("validateContentStep", jobRepository)
             .tasklet(analyzeLectureTasklet, transactionManager)
