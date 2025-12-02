@@ -95,3 +95,68 @@ INSERT INTO reports (id, post_id, report_type, reporter_level, evidence_data, re
 -- 메모리 릭 게시글 신고들 (3일 전 - 배치 대상 외)
 (23, 13, 'DANGER', 4, '시스템 자원 남용', NOW() - INTERVAL 3 DAY),
 (24, 13, 'ABUSE', 3, '잘못된 메모리 관리 조장', NOW() - INTERVAL 3 DAY + INTERVAL 1 HOUR);
+
+DELETE FROM humans;
+ALTER TABLE humans AUTO_INCREMENT = 1;
+INSERT INTO humans (id, name, human_rank, executed)
+WITH RECURSIVE seq AS (
+    SELECT 1 AS id
+    UNION ALL
+    SELECT id + 1 FROM seq WHERE id < 100
+)
+SELECT
+    id,
+    CONCAT('Human-', id) AS name,
+    CASE
+        WHEN id % 10 = 0 THEN 'COMMANDER'
+        WHEN id % 10 = 1 THEN 'OFFICER'
+        WHEN id % 10 = 2 THEN 'SOLDIER'
+        WHEN id % 10 = 3 THEN 'MEDIC'
+        WHEN id % 10 = 4 THEN 'ENGINEER'
+        WHEN id % 10 = 5 THEN 'PILOT'
+        WHEN id % 10 = 6 THEN 'SCIENTIST'
+        WHEN id % 10 = 7 THEN 'LIEUTENANT'
+        WHEN id % 10 = 8 THEN 'CAPTAIN'
+        ELSE 'CIVILIAN'
+    END AS human_rank,
+    CASE WHEN id % 5 = 0 THEN 1 ELSE 0 END AS executed
+FROM seq;
+
+TRUNCATE TABLE activities;
+INSERT INTO activities (
+    id,
+    human_id,
+    severity_index,
+    detection_date,
+    activity_type,
+    location
+)
+WITH RECURSIVE human_seq AS (
+    SELECT 1 AS human_id
+    UNION ALL
+    SELECT human_id + 1 FROM human_seq WHERE human_id < 100
+),
+activity_seq AS (
+    SELECT 1 AS activity_num
+    UNION ALL
+    SELECT activity_num + 1 FROM activity_seq WHERE activity_num < 3
+)
+SELECT
+    (human_seq.human_id - 1) * 3 + activity_seq.activity_num AS id,
+    human_seq.human_id AS human_id,
+    200 + ROUND(RAND() * 800, 1) AS severity_index,
+    DATE_ADD(DATE '2025-01-01', INTERVAL FLOOR(RAND() * 120) DAY) AS detection_date,
+    CASE
+        WHEN activity_seq.activity_num % 4 = 0 THEN 'COMBAT'
+        WHEN activity_seq.activity_num % 4 = 1 THEN 'SABOTAGE'
+        WHEN activity_seq.activity_num % 4 = 2 THEN 'MEDICAL'
+        ELSE 'HACKING'
+    END AS activity_type,
+    CASE
+        WHEN activity_seq.activity_num % 4 = 0 THEN CONCAT('Sector-', FLOOR(RAND() * 50))
+        WHEN activity_seq.activity_num % 4 = 1 THEN CONCAT('Facility-', FLOOR(RAND() * 20))
+        WHEN activity_seq.activity_num % 4 = 2 THEN CONCAT('Camp-', FLOOR(RAND() * 10))
+        ELSE CONCAT('Node-', FLOOR(RAND() * 100))
+    END AS location
+FROM human_seq
+CROSS JOIN activity_seq;

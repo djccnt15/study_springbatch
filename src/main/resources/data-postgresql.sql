@@ -83,3 +83,46 @@ INSERT INTO reports (id, post_id, report_type, reporter_level, evidence_data, re
 -- 메모리 릭 게시글 신고들 (3일 전 - 배치 대상 외)
 (23, 13, 'DANGER', 4, '시스템 자원 남용', CURRENT_TIMESTAMP - INTERVAL '3 DAY'),
 (24, 13, 'ABUSE', 3, '잘못된 메모리 관리 조장', CURRENT_TIMESTAMP - INTERVAL '3 DAY' + INTERVAL '1 HOUR');
+
+TRUNCATE TABLE humans;
+INSERT INTO humans (id, name, human_rank, executed)
+SELECT
+  id,
+  'Human-' || id AS name,
+  CASE
+    WHEN id % 10 = 0 THEN 'COMMANDER'
+    WHEN id % 10 = 1 THEN 'OFFICER'
+    WHEN id % 10 = 2 THEN 'SOLDIER'
+    WHEN id % 10 = 3 THEN 'MEDIC'
+    WHEN id % 10 = 4 THEN 'ENGINEER'
+    WHEN id % 10 = 5 THEN 'PILOT'
+    WHEN id % 10 = 6 THEN 'SCIENTIST'
+    WHEN id % 10 = 7 THEN 'LIEUTENANT'
+    WHEN id % 10 = 8 THEN 'CAPTAIN'
+    ELSE 'CIVILIAN'
+  END AS human_rank,
+  (id % 5 = 0) AS terminated
+FROM generate_series(1, 100) AS id;
+
+TRUNCATE TABLE activities;
+INSERT INTO activities (id, human_id, severity_index, detection_date, activity_type, location)
+SELECT
+  (human_id - 1) * 3 + activity_num AS id,
+  human_id,
+  200 + (random() * 800)::numeric(10,1) AS severity_index,
+  ('2025-01-01'::date + (random() * 120)::integer * '1 day'::interval)::date AS detection_date,
+  CASE
+    WHEN activity_num % 4 = 0 THEN 'COMBAT'
+    WHEN activity_num % 4 = 1 THEN 'SABOTAGE'
+    WHEN activity_num % 4 = 2 THEN 'MEDICAL'
+    ELSE 'HACKING'
+  END AS activity_type,
+  CASE
+    WHEN activity_num % 4 = 0 THEN 'Sector-' || (random() * 50)::integer
+    WHEN activity_num % 4 = 1 THEN 'Facility-' || (random() * 20)::integer
+    WHEN activity_num % 4 = 2 THEN 'Camp-' || (random() * 10)::integer
+    ELSE 'Node-' || (random() * 100)::integer
+  END AS location
+FROM
+  generate_series(1, 100) AS human_id,
+  generate_series(1, 3) AS activity_num;
