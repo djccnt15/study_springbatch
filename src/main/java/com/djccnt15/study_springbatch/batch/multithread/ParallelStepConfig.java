@@ -1,5 +1,7 @@
-package com.djccnt15.study_springbatch.batch;
+package com.djccnt15.study_springbatch.batch.multithread;
 
+import com.djccnt15.study_springbatch.annotation.Batch;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -7,6 +9,7 @@ import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -15,16 +18,20 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
-// @Batch
+@Batch
+@RequiredArgsConstructor
 public class ParallelStepConfig {
     
+    private final JobRepository jobRepository;
+    private final PlatformTransactionManager transactionManager;
+    
     @Bean
-    public Job job(
-        JobRepository jobRepository,
+    public Job parallelStepJob(
         Step step4,
         Flow splitFlow
     ) {
-        return new JobBuilder("job", jobRepository)
+        return new JobBuilder("parallelStepJob", jobRepository)
+            .incrementer(new RunIdIncrementer())
             .start(splitFlow)
             .next(step4)
             .build().build();
@@ -54,58 +61,46 @@ public class ParallelStepConfig {
     }
     
     @Bean
-    public Step step1(
-        JobRepository jobRepository,
-        PlatformTransactionManager platformTransactionManager
-    ) {
+    public Step step1() {
         return new StepBuilder("step1", jobRepository)
             .tasklet((a, b) -> {
                 Thread.sleep(1000);
                 log.info("step1");
                 return RepeatStatus.FINISHED;
-            }, platformTransactionManager)
+            }, transactionManager)
             .build();
     }
     
     @Bean
-    public Step step2(
-        JobRepository jobRepository,
-        PlatformTransactionManager platformTransactionManager
-    ) {
+    public Step step2() {
         return new StepBuilder("step2", jobRepository)
             .tasklet((a, b) -> {
                 Thread.sleep(2000);
                 log.info("step2");
                 return RepeatStatus.FINISHED;
-            }, platformTransactionManager)
+            }, transactionManager)
             .build();
     }
     
     @Bean
-    public Step step3(
-        JobRepository jobRepository,
-        PlatformTransactionManager platformTransactionManager
-    ) {
+    public Step step3() {
         return new StepBuilder("step3", jobRepository)
             .tasklet((a, b) -> {
                 Thread.sleep(2500);
                 log.info("step3");
                 return RepeatStatus.FINISHED;
-            }, platformTransactionManager)
+            }, transactionManager)
             .build();
     }
     
     @Bean
-    public Step step4(
-        JobRepository jobRepository,
-        PlatformTransactionManager platformTransactionManager
-    ) {
+    public Step step4() {
         return new StepBuilder("step4", jobRepository)
             .tasklet((a, b) -> {
                 Thread.sleep(1000);
                 log.info("step4");
                 return RepeatStatus.FINISHED;
-            }, platformTransactionManager)
+            }, transactionManager)
             .build();
     }
 }
