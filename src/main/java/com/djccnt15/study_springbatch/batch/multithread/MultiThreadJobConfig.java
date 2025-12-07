@@ -29,8 +29,8 @@ public class MultiThreadJobConfig {
     @Bean
     public Job multiThreadJob(Step multiThreadStep) {
         return new JobBuilder("multiThreadJob", jobRepository)
-            .start(multiThreadStep)
             .incrementer(new RunIdIncrementer())
+            .start(multiThreadStep)
             .build();
     }
     

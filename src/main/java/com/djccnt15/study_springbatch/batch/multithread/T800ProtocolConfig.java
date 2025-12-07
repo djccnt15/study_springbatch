@@ -42,8 +42,8 @@ public class T800ProtocolConfig {
     @Bean
     public Job humanThreatAnalysisJob(Step threatAnalysisStep) {
         return new JobBuilder("humanThreatAnalysisJob", jobRepository)
-            .start(threatAnalysisStep)
             .incrementer(new RunIdIncrementer())
+            .start(threatAnalysisStep)
             .build();
     }
     
