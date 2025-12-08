@@ -1,4 +1,4 @@
-package com.djccnt15.study_springbatch.batch;
+package com.djccnt15.study_springbatch.batch.partitioning.partitioner;
 
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
@@ -18,17 +18,17 @@ public class ColumnRangePartitioner implements Partitioner {
     
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
-        final Integer min = jdbcTemplate.queryForObject("SELECT MIN(id) from USER", Integer.class);
-        final Integer max = jdbcTemplate.queryForObject("SELECT MAX(id) from USER", Integer.class);
-        int targetSize = (max - min) / gridSize + 1;
+        var min = jdbcTemplate.queryForObject("SELECT MIN(id) from USER", Integer.class);
+        var max = jdbcTemplate.queryForObject("SELECT MAX(id) from USER", Integer.class);
+        var targetSize = (max - min) / gridSize + 1;
         
-        final Map<String, ExecutionContext> result = new HashMap<>();
-        int number = 0;
+        var result = new HashMap<String, ExecutionContext>();
+        var number = 0;
         int start = min;
-        int end = start + targetSize - 1;
+        var end = start + targetSize - 1;
         
         while (start <= max) {
-            final ExecutionContext value = new ExecutionContext();
+            var value = new ExecutionContext();
             result.put("partition" + number, value);
             
             if (end >= max) {

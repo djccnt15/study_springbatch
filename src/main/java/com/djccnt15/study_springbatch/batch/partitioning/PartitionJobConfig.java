@@ -1,7 +1,10 @@
-package com.djccnt15.study_springbatch.batch;
+package com.djccnt15.study_springbatch.batch.partitioning;
 
-import com.djccnt15.study_springbatch.model.UserEntity;
+import com.djccnt15.study_springbatch.annotation.Batch;
+import com.djccnt15.study_springbatch.batch.partitioning.partitioner.ColumnRangePartitioner;
+import com.djccnt15.study_springbatch.db.model.UserEntity;
 import jakarta.persistence.EntityManagerFactory;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -24,81 +27,74 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-// @Batch
+@Batch
+@RequiredArgsConstructor
 public class PartitionJobConfig {
     
+    private final JobRepository jobRepository;
+    private final PlatformTransactionManager transactionManager;
+    private final EntityManagerFactory entityManagerFactory;
+    private final DataSource dataSource;
+    
     @Bean
-    public Job job(
-        JobRepository jobRepository,
-        Step managerStep
-    ) {
+    public Job partitionJob(Step managerStep) {
         return new JobBuilder("partitionJob", jobRepository)
-            .start(managerStep)
             .incrementer(new RunIdIncrementer())
+            .start(managerStep)
             .build();
     }
     
     @Bean
     public Step managerStep(
-        JobRepository jobRepository,
-        Step step,
-        PartitionHandler partitionHandler,
-        DataSource dataSource
+        Step partitionStep,
+        PartitionHandler partitionHandler
     ) {
         return new StepBuilder("managerStep", jobRepository)
             .partitioner("delegateStep", new ColumnRangePartitioner(dataSource))
-            .step(step)
+            .step(partitionStep)
             .partitionHandler(partitionHandler)
             .build();
     }
     
     @Bean
-    public PartitionHandler partitionHandler(Step step) {
-        final TaskExecutorPartitionHandler taskExecutorPartitionHandler = new TaskExecutorPartitionHandler();
-        taskExecutorPartitionHandler.setStep(step);
+    public PartitionHandler partitionHandler(Step partitionStep) {
+        var taskExecutorPartitionHandler = new TaskExecutorPartitionHandler();
+        taskExecutorPartitionHandler.setStep(partitionStep);
         taskExecutorPartitionHandler.setTaskExecutor(new SimpleAsyncTaskExecutor());
         taskExecutorPartitionHandler.setGridSize(5);
         return taskExecutorPartitionHandler;
     }
     
     @Bean
-    public Step step(
-        JobRepository jobRepository,
-        JpaPagingItemReader<UserEntity> jpaPagingItemReader,
-        PlatformTransactionManager platformTransactionManager
-    ) {
-        return new StepBuilder("step", jobRepository)
-            .<UserEntity, UserEntity>chunk(4, platformTransactionManager)
-            .reader(jpaPagingItemReader)
+    public Step partitionStep(JpaPagingItemReader<UserEntity> partitionItemReader) {
+        return new StepBuilder("partitionStep", jobRepository)
+            .<UserEntity, UserEntity>chunk(4, transactionManager)
+            .reader(partitionItemReader)
             .writer(result -> log.info(result.toString()))
             .build();
     }
     
     @Bean
     @StepScope
-    public JpaPagingItemReader<UserEntity> itemReader(
+    public JpaPagingItemReader<UserEntity> partitionItemReader(
         @Value("#{stepExecutionContext[minValue]}") Long minValue,
-        @Value("#{stepExecutionContext[maxValue]}") Long maxValue,
-        EntityManagerFactory entityManagerFactory
+        @Value("#{stepExecutionContext[maxValue]}") Long maxValue
     ) {
         log.info("minValue: {}, maxValue: {}", minValue, maxValue);
         
-        final Map<String, Object> params = new HashMap<>();
+        var params = new HashMap<String, Object>();
         params.put("minValue", minValue);
         params.put("maxValue", maxValue);
         
         return new JpaPagingItemReaderBuilder<UserEntity>()
-            .name("itemReader")
+            .name("partitionItemReader")
             .entityManagerFactory(entityManagerFactory)
             .pageSize(5)
-            .queryString(
-                """
-                    SELECT u FROM User u
-                    WHERE
-                        1=1
-                        AND u.id BETWEEN :minValue and :maxValue
-                    """
-            )
+            .queryString("""
+                SELECT u FROM UserEntity u
+                WHERE 1=1
+                AND u.id BETWEEN :minValue and :maxValue
+                """)
             .parameterValues(params)
             .build();
     }
