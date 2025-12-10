@@ -1,0 +1,22 @@
+spring:
+  output.ansi.enabled: always
+  batch:
+    jdbc.initialize-schema: always
+    job.enabled: false
+  datasource:
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    # show-sql: true
+    hibernate.ddl-auto: create
+    properties.hibernate:
+      format_sql: true
+      highlight_sql: true
+      use_sql_comment: true
+      dialect: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true  # delays running `data.sql` after create JPA entity tables
+  sql.init:  # run `schema.sql`, `data.sql`
+    mode: always
+    # platform: mysql  # runs `schema-{platform}.sql`, `data-{platform}.sql` if exists
