@@ -7,24 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Entity
+@Table(name = "posts")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "posts")
 public class PostEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "title")
+    @Column
     private String title;
     
-    @Column(name = "content")
+    @Column
     private String content;
     
-    @Column(name = "writer")
+    @Column
     private String writer;
     
     @Builder.Default

@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
+@Entity
+@Table(name = "blocked_posts")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "blocked_posts")
 public class BlockedPostEntity {
     
     @Id
@@ -28,8 +28,10 @@ public class BlockedPostEntity {
     @Column(name = "post_id")
     private Long postId;
     
+    @Column
     private String writer;
     
+    @Column
     private String title;
     
     @Column(name = "report_count")

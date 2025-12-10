@@ -7,14 +7,15 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Data
+@Entity
+@Table(name = "activities")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "activities")
 public class ActivityEntity {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @Column

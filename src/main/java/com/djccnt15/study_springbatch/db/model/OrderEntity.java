@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
+@Entity
+@Table(name = "orders")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "orders")
 public class OrderEntity {
     
     @Id
@@ -27,7 +27,7 @@ public class OrderEntity {
     @Column(name = "order_datetime")
     private LocalDateTime orderDatetime;
     
-    @Column(name = "status")
+    @Column
     @Enumerated(EnumType.STRING)
     private OrderStatusEnum status;
     

@@ -1,22 +1,23 @@
-package com.djccnt15.study_springbatch.model;
+package com.djccnt15.study_springbatch.db.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
+@Data
 @Entity
 @Table(name = "SETTLE_DETAIL")
 @NoArgsConstructor
-@ToString
-@SuperBuilder
+@AllArgsConstructor
+@Builder
 public class SettleDetailEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
     
     @Column(name = "customer_id")

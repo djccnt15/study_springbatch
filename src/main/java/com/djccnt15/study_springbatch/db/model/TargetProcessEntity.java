@@ -9,18 +9,18 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
+@Entity
+@Table(name = "target_process")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "target_process")
 public class TargetProcessEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "name")
+    @Column
     private String name;
     
     @Column(name = "process_id")
@@ -29,6 +29,6 @@ public class TargetProcessEntity {
     @Column(name = "terminated_at")
     private LocalDateTime terminatedAt;
     
-    @Column(name = "status")
+    @Column
     private String status;
 }

@@ -1,10 +1,11 @@
-package com.djccnt15.study_springbatch.model;
+package com.djccnt15.study_springbatch.db.model;
 
 import com.djccnt15.study_springbatch.enums.State;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +13,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "API_ORDER")
 @NoArgsConstructor
-@SuperBuilder
+@AllArgsConstructor
+@Builder
 public class ApiOrderEntity {
 
     @Id

@@ -11,15 +11,15 @@ import org.hibernate.annotations.BatchSize;
 import java.util.List;
 
 @Data
+@Entity
+@Table(name = "humans")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "humans")
 public class HumanEntity {
     
     @Id
-    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @Column
