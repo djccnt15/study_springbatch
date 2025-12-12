@@ -1,6 +1,6 @@
 package com.djccnt15.study_springbatch.db.model;
 
-import com.djccnt15.study_springbatch.enums.State;
+import com.djccnt15.study_springbatch.batch.practice.settlement.enums.State;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

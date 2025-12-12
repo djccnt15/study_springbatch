@@ -34,4 +34,11 @@ public class SettleGroupEntity {
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    
+    public SettleGroupEntity(Long customerId, Long serviceId, Long totalCount, Long totalFee) {
+        this.customerId = customerId;
+        this.serviceId = serviceId;
+        this.totalCount = totalCount;
+        this.totalFee = totalFee;
+    }
 }
